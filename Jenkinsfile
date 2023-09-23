@@ -19,20 +19,35 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                // Pull the git repo
+                checkout scm
+            }
+        }
+
         stage('Install Terraform') {
             steps {
                 script {
-                    installTerraform()
+                  installTerraform()
+            }
+
+          }
+	}
+        stage('Terraform Deployment') {
+            steps {
+                script {
+                    // CD into deployment folder and run terraform commands
+                    dir('deployment') {
+                        sh '''
+                            terraform init
+                            terraform plan
+                            terraform apply -auto-approve
+                        '''
+                    }
                 }
             }
         }
-       stage('Creating EC2 instance'){
-	steps {
-            script {
-		sh 'echo "Creating EC2 instance"'
-		}
-	     }
-	}
     }
 }
 
