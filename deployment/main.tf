@@ -1,16 +1,15 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-west-2"
 }
 
 # Fetching the VPC named Application-Vpc
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Name"
-    values = ["Application-Vpc"]
+    values = ["project-vpc"]
   }
 }
 
-# Fetching subnets of the VPC
 data "aws_subnets" "selected" {
   filter {
     name   = "vpc-id"
@@ -18,7 +17,6 @@ data "aws_subnets" "selected" {
   }
 }
 
-# Fetching the latest Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
 
@@ -44,6 +42,6 @@ resource "aws_instance" "example" {
   subnet_id = tolist(data.aws_subnets.selected.ids)[0]
 
   tags = {
-    Name = "ExampleInstance"
+    Name = "MyInstance"
   }
 }
